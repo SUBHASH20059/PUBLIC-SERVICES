@@ -1,0 +1,119 @@
+# OpenAPI additions for PSEI endpoints
+
+openapi: 3.0.3
+info:
+  title: PSEI Authority API (skeleton)
+  version: 0.2.0
+  description: Minimal OpenAPI spec for the PSEI Authority skeleton service. Includes innovation/support endpoints.
+servers:
+  - url: http://localhost:8080
+paths:
+  /civil/marriages:
+    get:
+      summary: List marriages
+      responses:
+        '200':
+          description: OK
+    post:
+      summary: Create marriage record
+      requestBody:
+        required: true
+      responses:
+        '201':
+          description: Created
+  /psei/ideas:
+    get:
+      summary: List idea records
+      responses:
+        '200':
+          description: OK
+    post:
+      summary: Register an idea (vault)
+      requestBody:
+        required: true
+      responses:
+        '201':
+          description: Created
+  /psei/patents:
+    get:
+      summary: List patent assistance requests
+      responses:
+        '200':
+          description: OK
+    post:
+      summary: Create patent assistance request
+      requestBody:
+        required: true
+      responses:
+        '201':
+          description: Created
+  /psei/schemes/search:
+    get:
+      summary: Search for matched government schemes (stub)
+      responses:
+        '200':
+          description: OK
+  /psei/protection/templates:
+    get:
+      summary: List protection templates
+      responses:
+        '200':
+          description: OK
+    post:
+      summary: Create a template metadata entry
+      requestBody:
+        required: true
+      responses:
+        '201':
+          description: Created
+components:
+  schemas:
+    IdeaRecord:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        description:
+          type: string
+        creatorId:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        version:
+          type: integer
+        signature:
+          type: string
+        publicKeyFingerprint:
+          type: string
+    PatentAssistanceRequest:
+      type: object
+      properties:
+        id:
+          type: integer
+        ideaId:
+          type: integer
+        requesterId:
+          type: string
+        status:
+          type: string
+        priorArtNotes:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+    TemplateMetadata:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        fields:
+          type: array
+          items:
+            type: string

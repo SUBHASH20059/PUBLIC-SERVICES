@@ -1,21 +1,53 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
-</div>
+# PSEI Authority — Public Support for Enterprise & Innovation
 
-# Run and deploy your AI Studio app
+Refined vision
 
-This contains everything you need to run your app locally.
+PSEI is a national innovation support ecosystem that helps citizens, entrepreneurs, students, researchers, developers, inventors, and startups move from Idea → Documentation → Protection → Registration → Funding → Growth.
 
-View your app in AI Studio: https://ai.studio/apps/8c86178c-d4d1-445e-85b3-5019355c36b9
+Core mission
 
-## Run Locally
+- Help users register businesses and apply for protections (patents/trademarks).
+- Provide guidance, templates, and mentor/investor discovery instead of acting as an authority that grants registrations.
+- Offer an Idea Registration Vault that records timestamps, creator identity, version history, digital signatures, and access history as evidence of authorship.
+- Provide patent-application assistance and status tracking (assistance center, not a patent office).
+- Match users to government schemes (Startup India, MSME, Atal Innovation Mission) with a discovery API.
+- Provide legal/protection templates (NDAs, founder agreements) and guidance.
+- Support students with project registration, mentor matching, and grant applications.
 
-**Prerequisites:**  [Android Studio](https://developer.android.com/studio)
+Where PSEI fits (high level)
 
+National Digital Trust Platform
 
-1. Open Android Studio
-2. Select **Open** and choose the directory containing this project
-3. Allow Android Studio to fix any incompatibilities as it imports the project.
-4. Create a file named `.env` in the project directory and set `GEMINI_API_KEY` in that file to your Gemini API key (see `.env.example` for an example)
-5. Remove this line from the app's `build.gradle.kts` file: `signingConfig = signingConfigs.getByName("debugConfig")`
-6. Run the app on an emulator or physical device
+├── Civil Registration Services
+├── Land & Real Estate Services
+├── Legal Services
+├── Citizen Document Vault
+├── Business Registration Services
+└── PSEI
+      ├── Innovation Protection
+      ├── Patent Assistance
+      ├── Startup Support
+      ├── Developer Protection
+      ├── Government Scheme Access
+      ├── Investor Network
+      ├── Mentor Network
+      └── Student Innovation Hub
+
+Implementation notes in this repo (skeleton)
+
+- Ktor-based lightweight scaffold: psei-service/
+- Kotlin domain models for civil/real-estate and new innovation models under org.psei.innovation
+- Flyway migration V1 (core civic tables) and V2 (innovation tables)
+- OpenAPI spec at docs/openapi.yaml with endpoints for PSEI features (stubs)
+- Authentication: placeholder notes for JWT-based auth; endpoints are currently unauthenticated stubs with TODOs to add auth/authorization
+- Scheme discovery: endpoint stub only; AI-powered matching is out of scope for the skeleton (TODO)
+- Digital signatures: README recommends a public-key approach for evidence (store signature, public-key fingerprint, and access logs). Full crypto implementation is out of scope.
+
+Next steps (suggested priorities)
+
+1. Wire Exposed DAOs and enable Flyway at startup.
+2. Add JWT-based authentication and role-based access control.
+3. Implement idea vault: signature generation/verification, versioning, and access audit logs.
+4. Add minimal text-matching scheme-discovery prototype (keyword-based) or integrate an ML service later.
+5. Add CI (tests + GitHub Actions) and basic integration tests for endpoints.
+
