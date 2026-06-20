@@ -1,0 +1,255 @@
+openapi: 3.0.3
+info:
+  title: PSEI Authority API (skeleton)
+  version: 0.3.0
+  description: API for the PSEI Authority skeleton including innovation and business dashboard endpoints.
+servers:
+  - url: http://localhost:8080
+paths:
+  /civil/marriages:
+    get:
+      summary: List marriages
+      responses:
+        '200':
+          description: OK
+    post:
+      summary: Create marriage record
+      requestBody:
+        required: true
+      responses:
+        '201':
+          description: Created
+  /psei/ideas:
+    get:
+      summary: List idea records
+      responses:
+        '200':
+          description: OK
+    post:
+      summary: Register an idea (vault)
+      requestBody:
+        required: true
+      responses:
+        '201':
+          description: Created
+  /psei/patents:
+    get:
+      summary: List patent assistance requests
+      responses:
+        '200':
+          description: OK
+    post:
+      summary: Create patent assistance request
+      requestBody:
+        required: true
+      responses:
+        '201':
+          description: Created
+  /psei/schemes/search:
+    get:
+      summary: Search for matched government schemes (stub)
+      responses:
+        '200':
+          description: OK
+  /psei/protection/templates:
+    get:
+      summary: List protection templates
+      responses:
+        '200':
+          description: OK
+    post:
+      summary: Create a template metadata entry
+      requestBody:
+        required: true
+      responses:
+        '201':
+          description: Created
+  /dashboard/summary:
+    get:
+      summary: Business dashboard summary for the authenticated user
+      responses:
+        '200':
+          description: OK
+  /dashboard/multi:
+    get:
+      summary: Multi-business management view
+      responses:
+        '200':
+          description: OK
+  /dashboard/visualization/{businessId}:
+    get:
+      summary: Get ownership graph data for visualization
+      parameters:
+        - name: businessId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+  /businesses:
+    get:
+      summary: List businesses (admin/debug)
+      responses:
+        '200':
+          description: OK
+    post:
+      summary: Create a business record
+      requestBody:
+        required: true
+      responses:
+        '201':
+          description: Created
+  /businesses/{id}:
+    get:
+      summary: Get business profile (requires authorization)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+  /businesses/{id}/ownerships:
+    get:
+      summary: Get ownership breakdown and history
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+  /businesses/{id}/documents:
+    get:
+      summary: List documents for a business (requires authorization)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+    post:
+      summary: Upload a document for a business
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '201':
+          description: Created
+  /businesses/{id}/documents/download/{docId}:
+    get:
+      summary: Download a business document (requires authorization)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: docId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+  /businesses/{id}/tax:
+    get:
+      summary: Get tax & compliance summary for a business
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+components:
+  schemas:
+    Business:
+      type: object
+      properties:
+        id:
+          type: integer
+        legalName:
+          type: string
+        registrationNumber:
+          type: string
+        type:
+          type: string
+        incorporationDate:
+          type: string
+          format: date
+        status:
+          type: string
+        primaryContact:
+          type: string
+        addresses:
+          type: object
+    Ownership:
+      type: object
+      properties:
+        id:
+          type: integer
+        businessId:
+          type: integer
+        ownerId:
+          type: string
+        ownerType:
+          type: string
+        ownershipPercentage:
+          type: number
+        role:
+          type: string
+        effectiveFrom:
+          type: string
+          format: date
+        effectiveTo:
+          type: string
+          format: date
+    DocumentMetadata:
+      type: object
+      properties:
+        id:
+          type: integer
+        businessId:
+          type: integer
+        type:
+          type: string
+        filename:
+          type: string
+        storagePath:
+          type: string
+        uploadedAt:
+          type: string
+          format: date-time
+        uploadedBy:
+          type: string
+        encrypted:
+          type: boolean
+        metadata:
+          type: object
+    UnifiedIdentity:
+      type: object
+      properties:
+        userId:
+          type: string
+        verified:
+          type: boolean
+        linkedBusinesses:
+          type: array
+          items:
+            type: integer

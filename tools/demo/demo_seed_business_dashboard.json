@@ -1,0 +1,27 @@
+{
+  "demoUser": {
+    "userId": "demo_user_1",
+    "verified": true,
+    "linkedBusinesses": [101, 102, 103]
+  },
+  "businesses": [
+    {
+      "id": 101,
+      "legalName": "Subbu Holdings Pvt Ltd",
+      "registrationNumber": "U12345",
+      "ownership": 80.0
+    },
+    {
+      "id": 102,
+      "legalName": "AI Solutions India Pvt Ltd",
+      "registrationNumber": "U23456",
+      "ownership": 35.0
+    },
+    {
+      "id": 103,
+      "legalName": "GreenTech Innovations LLP",
+      "registrationNumber": "U34567",
+      "ownership": 50.0
+    }
+  ]
+}
