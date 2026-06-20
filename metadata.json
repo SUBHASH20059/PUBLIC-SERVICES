@@ -1,0 +1,6 @@
+{
+  "name": "Lekha Registry",
+  "description": "An offline-first, highly secured legal registry for land, marriage, agreement, and loan deeds. Adheres to constitutional norms with robust verification controls for Government officers, IAS/IT clearances, and Court order amendments.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
