@@ -1,21 +1,35 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
-</div>
+# PSEI Authority
 
-# Run and deploy your AI Studio app
+This repository adds a skeleton for the PSEI Authority services: divisions, Kotlin data models, a lightweight Ktor REST scaffold, a Postgres schema (Flyway migration), and an OpenAPI spec.
 
-This contains everything you need to run your app locally.
+Structure
 
-View your app in AI Studio: https://ai.studio/apps/8c86178c-d4d1-445e-85b3-5019355c36b9
+- psei-service/
+  - src/main/kotlin/org/psei/
+    - Application.kt  — Ktor entrypoint
+    - models/         — domain data classes (Marriage, Birth, Property, Company, Complaint)
+    - routes/         — example endpoints per division
+  - resources/
+    - application.conf
+    - db/migration/V1__init.sql — Flyway migration creating core tables
 
-## Run Locally
+- docs/openapi.yaml — OpenAPI v3 spec for the skeleton
 
-**Prerequisites:**  [Android Studio](https://developer.android.com/studio)
+What I added
 
+- Basic Ktor scaffold with endpoints for each division (GET/POST placeholders).
+- Kotlin data classes representing the main entities.
+- Flyway SQL migration to create initial tables.
+- OpenAPI spec with minimal path definitions.
 
-1. Open Android Studio
-2. Select **Open** and choose the directory containing this project
-3. Allow Android Studio to fix any incompatibilities as it imports the project.
-4. Create a file named `.env` in the project directory and set `GEMINI_API_KEY` in that file to your Gemini API key (see `.env.example` for an example)
-5. Remove this line from the app's `build.gradle.kts` file: `signingConfig = signingConfigs.getByName("debugConfig")`
-6. Run the app on an emulator or physical device
+How to run
+
+1. Install JDK 17+ and Gradle.
+2. From psei-service directory: `./gradlew run` (or import into IntelliJ).
+3. Ensure Postgres is running and configured in application.conf before enabling DB features.
+
+Next steps I can take
+
+- Wire endpoints to DB (Exposed DAOs), add tests, and document environment variables.
+- Open a Pull Request from branch `psei-authority/skeleton` to merge these changes.
+

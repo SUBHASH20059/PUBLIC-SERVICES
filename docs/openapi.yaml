@@ -1,0 +1,101 @@
+openapi: 3.0.3
+info:
+  title: PSEI Authority API (skeleton)
+  version: 0.1.0
+  description: Minimal OpenAPI spec for the PSEI Authority skeleton service.
+servers:
+  - url: http://localhost:8080
+paths:
+  /civil/marriages:
+    get:
+      summary: List marriages
+      responses:
+        '200':
+          description: OK
+    post:
+      summary: Create marriage record
+      requestBody:
+        required: true
+      responses:
+        '201':
+          description: Created
+  /civil/births:
+    get:
+      summary: List births
+      responses:
+        '200':
+          description: OK
+    post:
+      summary: Create birth record
+      requestBody:
+        required: true
+      responses:
+        '201':
+          description: Created
+  /real-estate/properties:
+    get:
+      summary: List properties
+      responses:
+        '200':
+          description: OK
+    post:
+      summary: Register property
+      requestBody:
+        required: true
+      responses:
+        '201':
+          description: Created
+  /business/companies:
+    get:
+      summary: List companies
+      responses:
+        '200':
+          description: OK
+    post:
+      summary: Register company
+      requestBody:
+        required: true
+      responses:
+        '201':
+          description: Created
+  /legal/complaints:
+    get:
+      summary: List complaints
+      responses:
+        '200':
+          description: OK
+    post:
+      summary: Submit complaint
+      requestBody:
+        required: true
+      responses:
+        '201':
+          description: Created
+components:
+  schemas:
+    Marriage:
+      type: object
+      properties:
+        id:
+          type: integer
+        spouseA:
+          type: string
+        spouseB:
+          type: string
+        marriageDate:
+          type: string
+          format: date
+    Birth:
+      type: object
+      properties:
+        id:
+          type: integer
+        childName:
+          type: string
+        motherName:
+          type: string
+        fatherName:
+          type: string
+        birthDate:
+          type: string
+          format: date
