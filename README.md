@@ -1,35 +1,53 @@
-# PSEI Authority
+# PSEI Authority — Public Support for Enterprise & Innovation
 
-This repository adds a skeleton for the PSEI Authority services: divisions, Kotlin data models, a lightweight Ktor REST scaffold, a Postgres schema (Flyway migration), and an OpenAPI spec.
+Refined vision
 
-Structure
+PSEI is a national innovation support ecosystem that helps citizens, entrepreneurs, students, researchers, developers, inventors, and startups move from Idea → Documentation → Protection → Registration → Funding → Growth.
 
-- psei-service/
-  - src/main/kotlin/org/psei/
-    - Application.kt  — Ktor entrypoint
-    - models/         — domain data classes (Marriage, Birth, Property, Company, Complaint)
-    - routes/         — example endpoints per division
-  - resources/
-    - application.conf
-    - db/migration/V1__init.sql — Flyway migration creating core tables
+Core mission
 
-- docs/openapi.yaml — OpenAPI v3 spec for the skeleton
+- Help users register businesses and apply for protections (patents/trademarks).
+- Provide guidance, templates, and mentor/investor discovery instead of acting as an authority that grants registrations.
+- Offer an Idea Registration Vault that records timestamps, creator identity, version history, digital signatures, and access history as evidence of authorship.
+- Provide patent-application assistance and status tracking (assistance center, not a patent office).
+- Match users to government schemes (Startup India, MSME, Atal Innovation Mission) with a discovery API.
+- Provide legal/protection templates (NDAs, founder agreements) and guidance.
+- Support students with project registration, mentor matching, and grant applications.
 
-What I added
+Where PSEI fits (high level)
 
-- Basic Ktor scaffold with endpoints for each division (GET/POST placeholders).
-- Kotlin data classes representing the main entities.
-- Flyway SQL migration to create initial tables.
-- OpenAPI spec with minimal path definitions.
+National Digital Trust Platform
 
-How to run
+├── Civil Registration Services
+├── Land & Real Estate Services
+├── Legal Services
+├── Citizen Document Vault
+├── Business Registration Services
+└── PSEI
+      ├── Innovation Protection
+      ├── Patent Assistance
+      ├── Startup Support
+      ├── Developer Protection
+      ├── Government Scheme Access
+      ├── Investor Network
+      ├── Mentor Network
+      └── Student Innovation Hub
 
-1. Install JDK 17+ and Gradle.
-2. From psei-service directory: `./gradlew run` (or import into IntelliJ).
-3. Ensure Postgres is running and configured in application.conf before enabling DB features.
+Implementation notes in this repo (skeleton)
 
-Next steps I can take
+- Ktor-based lightweight scaffold: psei-service/
+- Kotlin domain models for civil/real-estate and new innovation models under org.psei.innovation
+- Flyway migration V1 (core civic tables) and V2 (innovation tables)
+- OpenAPI spec at docs/openapi.yaml with endpoints for PSEI features (stubs)
+- Authentication: placeholder notes for JWT-based auth; endpoints are currently unauthenticated stubs with TODOs to add auth/authorization
+- Scheme discovery: endpoint stub only; AI-powered matching is out of scope for the skeleton (TODO)
+- Digital signatures: README recommends a public-key approach for evidence (store signature, public-key fingerprint, and access logs). Full crypto implementation is out of scope.
 
-- Wire endpoints to DB (Exposed DAOs), add tests, and document environment variables.
-- Open a Pull Request from branch `psei-authority/skeleton` to merge these changes.
+Next steps (suggested priorities)
+
+1. Wire Exposed DAOs and enable Flyway at startup.
+2. Add JWT-based authentication and role-based access control.
+3. Implement idea vault: signature generation/verification, versioning, and access audit logs.
+4. Add minimal text-matching scheme-discovery prototype (keyword-based) or integrate an ML service later.
+5. Add CI (tests + GitHub Actions) and basic integration tests for endpoints.
 

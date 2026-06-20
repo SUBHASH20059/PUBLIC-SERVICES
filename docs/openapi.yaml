@@ -1,8 +1,10 @@
+# OpenAPI additions for PSEI endpoints
+
 openapi: 3.0.3
 info:
   title: PSEI Authority API (skeleton)
-  version: 0.1.0
-  description: Minimal OpenAPI spec for the PSEI Authority skeleton service.
+  version: 0.2.0
+  description: Minimal OpenAPI spec for the PSEI Authority skeleton service. Includes innovation/support endpoints.
 servers:
   - url: http://localhost:8080
 paths:
@@ -19,53 +21,46 @@ paths:
       responses:
         '201':
           description: Created
-  /civil/births:
+  /psei/ideas:
     get:
-      summary: List births
+      summary: List idea records
       responses:
         '200':
           description: OK
     post:
-      summary: Create birth record
+      summary: Register an idea (vault)
       requestBody:
         required: true
       responses:
         '201':
           description: Created
-  /real-estate/properties:
+  /psei/patents:
     get:
-      summary: List properties
+      summary: List patent assistance requests
       responses:
         '200':
           description: OK
     post:
-      summary: Register property
+      summary: Create patent assistance request
       requestBody:
         required: true
       responses:
         '201':
           description: Created
-  /business/companies:
+  /psei/schemes/search:
     get:
-      summary: List companies
+      summary: Search for matched government schemes (stub)
+      responses:
+        '200':
+          description: OK
+  /psei/protection/templates:
+    get:
+      summary: List protection templates
       responses:
         '200':
           description: OK
     post:
-      summary: Register company
-      requestBody:
-        required: true
-      responses:
-        '201':
-          description: Created
-  /legal/complaints:
-    get:
-      summary: List complaints
-      responses:
-        '200':
-          description: OK
-    post:
-      summary: Submit complaint
+      summary: Create a template metadata entry
       requestBody:
         required: true
       responses:
@@ -73,29 +68,52 @@ paths:
           description: Created
 components:
   schemas:
-    Marriage:
+    IdeaRecord:
       type: object
       properties:
         id:
           type: integer
-        spouseA:
+        title:
           type: string
-        spouseB:
+        description:
           type: string
-        marriageDate:
+        creatorId:
           type: string
-          format: date
-    Birth:
+        createdAt:
+          type: string
+          format: date-time
+        version:
+          type: integer
+        signature:
+          type: string
+        publicKeyFingerprint:
+          type: string
+    PatentAssistanceRequest:
       type: object
       properties:
         id:
           type: integer
-        childName:
+        ideaId:
+          type: integer
+        requesterId:
           type: string
-        motherName:
+        status:
           type: string
-        fatherName:
+        priorArtNotes:
           type: string
-        birthDate:
+        createdAt:
           type: string
-          format: date
+          format: date-time
+    TemplateMetadata:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        fields:
+          type: array
+          items:
+            type: string
