@@ -82,3 +82,40 @@ data class PropertyValuation(
     val createdTimestamp: Long = System.currentTimeMillis()
 )
 
+// --- NEW ENTITIES ---
+
+@Entity(tableName = "employees")
+data class Employee(
+    @PrimaryKey val employeeId: String,
+    val fullName: String,
+    val role: String, // OFFICER, AUDITOR, ADMIN
+    val department: String,
+    val email: String,
+    val passwordHash: String,
+    val lastLogin: Long = 0L
+)
+
+@Entity(tableName = "audit_logs")
+data class AuditLog(
+    @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    val timestamp: Long = System.currentTimeMillis(),
+    val userId: String, // Employee ID or Citizen UID
+    val actionType: String, // LOGIN, CREATE_RECORD, UPDATE_RECORD, VAULT_ACCESS
+    val entityType: String, // RegistryRecord, CourtOrder, etc.
+    val entityId: String,
+    val details: String,
+    val ipAddress: String,
+    val deviceId: String,
+    val checksum: String // Cryptographic seal for the log entry
+)
+
+@Entity(tableName = "secure_vault_records")
+data class SecureVaultRecord(
+    @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    val ownerUid: String,
+    val docType: String,
+    val docTitle: String,
+    val encryptedData: String, // AES-256 Encrypted
+    val iv: String, // Initialization Vector for AES
+    val createdTimestamp: Long = System.currentTimeMillis()
+)
