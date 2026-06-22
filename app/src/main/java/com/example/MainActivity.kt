@@ -28,6 +28,8 @@ class MainActivity : ComponentActivity() {
         val registryViewModel = ViewModelProvider(this, registryFactory)[RegistryViewModel::class.java]
         val securityViewModel = SecurityViewModel(repository)
         val businessViewModel = BusinessViewModel(repository)
+        val gstViewModel = GstViewModel(repository)
+        val civilRegistryViewModel = CivilRegistryViewModel(repository)
         
         enableEdgeToEdge()
         setContent {
@@ -40,7 +42,9 @@ class MainActivity : ComponentActivity() {
                     RegistryMainScreen(
                         viewModel = registryViewModel,
                         securityViewModel = securityViewModel,
-                        businessViewModel = businessViewModel
+                        businessViewModel = businessViewModel,
+                        gstViewModel = gstViewModel,
+                        civilRegistryViewModel = civilRegistryViewModel
                     )
                 }
             }

@@ -6,18 +6,24 @@ import androidx.room.RoomDatabase
 @Database(
     entities = [
         RegistryRecord::class, 
+        GstProfile::class,
+        InvoiceLedger::class,
+        Employee::class,
+        ActionProposal::class,
+        CivilRegistry::class,
+        IssuedCertificate::class,
+        SchemeApplication::class,
+        AuditLog::class,
         OwnershipChangeRequest::class, 
         CourtOrder::class, 
         BlockchainBlock::class, 
         PropertyValuation::class,
-        Employee::class,
-        AuditLog::class,
         SecureVaultRecord::class,
         BusinessEntity::class,
         SeedIdea::class,
         BusinessComplianceLog::class
     ],
-    version = 5,
+    version = 6,
     exportSchema = false
 )
 abstract class RegistryDatabase : RoomDatabase() {

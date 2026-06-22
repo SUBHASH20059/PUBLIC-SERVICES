@@ -8,97 +8,64 @@ interface RegistryDao {
     // Registry Records
     @Query("SELECT * FROM registry_records ORDER BY createdTimestamp DESC")
     fun getAllRecords(): Flow<List<RegistryRecord>>
-
-    @Query("SELECT * FROM registry_records WHERE id = :id")
-    suspend fun getRecordById(id: Int): RegistryRecord?
-
-    @Query("SELECT * FROM registry_records WHERE ownerUniqueId = :uid")
-    fun getRecordsByOwner(uid: String): Flow<List<RegistryRecord>>
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertRecord(record: RegistryRecord)
-
     @Update
     suspend fun updateRecord(record: RegistryRecord)
 
-    // Change Requests
-    @Query("SELECT * FROM ownership_change_requests ORDER BY requestedTimestamp DESC")
-    fun getAllChangeRequests(): Flow<List<OwnershipChangeRequest>>
-
+    // GST Module
+    @Query("SELECT * FROM gst_profiles WHERE businessId = :businessId")
+    suspend fun getGstProfile(businessId: Int): GstProfile?
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertChangeRequest(request: OwnershipChangeRequest)
-
-    @Update
-    suspend fun updateChangeRequest(request: OwnershipChangeRequest)
-
-    // Court Orders
-    @Query("SELECT * FROM court_orders ORDER BY id DESC")
-    fun getAllCourtOrders(): Flow<List<CourtOrder>>
-
-    @Query("SELECT * FROM court_orders WHERE orderNumber = :orderNumber")
-    suspend fun getCourtOrderByNumber(orderNumber: String): CourtOrder?
-
+    suspend fun insertGstProfile(profile: GstProfile)
+    @Query("SELECT * FROM invoice_ledger WHERE supplierGstin = :gstin OR recipientGstin = :gstin")
+    fun getInvoices(gstin: String): Flow<List<InvoiceLedger>>
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertCourtOrder(courtOrder: CourtOrder)
+    suspend fun insertInvoice(invoice: InvoiceLedger)
 
-    @Update
-    suspend fun updateCourtOrder(courtOrder: CourtOrder)
-
-    // Blockchain Ledger
-    @Query("SELECT * FROM blockchain_ledger ORDER BY blockIndex ASC")
-    fun getAllBlockchainBlocks(): Flow<List<BlockchainBlock>>
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertBlockchainBlock(block: BlockchainBlock)
-
-    @Query("SELECT * FROM blockchain_ledger ORDER BY blockIndex DESC LIMIT 1")
-    suspend fun getLatestBlockchainBlock(): BlockchainBlock?
-
-    // Property Valuations
-    @Query("SELECT * FROM property_valuations ORDER BY createdTimestamp DESC")
-    fun getAllValuations(): Flow<List<PropertyValuation>>
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertValuation(valuation: PropertyValuation)
-
-    // Employee Auth
+    // Employee System
     @Query("SELECT * FROM employees WHERE employeeId = :id")
     suspend fun getEmployeeById(id: String): Employee?
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertEmployee(employee: Employee)
+    @Query("SELECT * FROM action_proposals WHERE checkerId IS NULL")
+    fun getPendingProposals(): Flow<List<ActionProposal>>
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertProposal(proposal: ActionProposal)
+    @Update
+    suspend fun updateProposal(proposal: ActionProposal)
+
+    // Civil Registries
+    @Query("SELECT * FROM civil_registries ORDER BY timestamp DESC")
+    fun getAllCivilEvents(): Flow<List<CivilRegistry>>
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertCivilEvent(event: CivilRegistry)
+
+    // Certificates
+    @Query("SELECT * FROM issued_certificates WHERE userId = :userId")
+    fun getCertificates(userId: String): Flow<List<IssuedCertificate>>
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertCertificate(cert: IssuedCertificate)
+
+    // Welfare Schemes
+    @Query("SELECT * FROM schemes_applications WHERE citizenId = :citizenId")
+    fun getSchemeApplications(citizenId: String): Flow<List<SchemeApplication>>
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertSchemeApplication(app: SchemeApplication)
 
     // Audit Logs
     @Query("SELECT * FROM audit_logs ORDER BY timestamp DESC")
     fun getAllAuditLogs(): Flow<List<AuditLog>>
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAuditLog(log: AuditLog)
-
-    // Secure Vault
-    @Query("SELECT * FROM secure_vault_records WHERE ownerUid = :uid")
-    fun getVaultRecordsByOwner(uid: String): Flow<List<SecureVaultRecord>>
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertVaultRecord(record: SecureVaultRecord)
-
-    // --- BUSINESS MODULE METHODS ---
-
+    
+    // Business Module (Retained)
     @Query("SELECT * FROM business_entities WHERE ownerUid = :uid")
     fun getBusinessesByOwner(uid: String): Flow<List<BusinessEntity>>
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertBusiness(business: BusinessEntity)
-
     @Query("SELECT * FROM seed_ideas WHERE creatorUid = :uid")
     fun getSeedIdeasByCreator(uid: String): Flow<List<SeedIdea>>
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertSeedIdea(idea: SeedIdea)
-
-    @Query("SELECT * FROM business_compliance_logs WHERE businessId = :businessId ORDER BY timestamp DESC")
-    fun getComplianceLogs(businessId: Int): Flow<List<BusinessComplianceLog>>
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertComplianceLog(log: BusinessComplianceLog)
 }

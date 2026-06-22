@@ -2,6 +2,7 @@ package com.example.data
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import androidx.room.TypeConverters
 
 @Entity(tableName = "registry_records")
 data class RegistryRecord(
@@ -9,48 +10,150 @@ data class RegistryRecord(
     val type: String, // LAND, MARRIAGE, AGREEMENT, LOAN, BUSINESS
     val title: String,
     val ownerName: String,
-    val ownerUniqueId: String, // Government-issued unique ID (e.g. Aadhaar / PAN)
+    val ownerUniqueId: String,
     val description: String,
-    val additionalParties: String, // Comma-separated list of other parties
-    val status: String, // PENDING, APPROVED, REJECTED
-    val constitutionStatutes: String, // Relevant law of India (e.g., Transfer of Property Act Sec 54)
-    val iasClearance: Boolean = false, // IAS clearing for verification
-    val incomeTaxClearance: Boolean = false, // Income Tax Clearance for verification
+    val additionalParties: String,
+    val status: String,
+    val constitutionStatutes: String,
+    val iasClearance: Boolean = false,
+    val incomeTaxClearance: Boolean = false,
     val createdTimestamp: Long = System.currentTimeMillis(),
-    val courtOrderLinked: String? = null, // Linked Court Order for changes
-    val chargeAmount: Double = 0.0, // Any financial liability or charged amount on registry (can only be changed via Court Order)
+    val courtOrderLinked: String? = null,
+    val chargeAmount: Double = 0.0,
     val verifiedByOfficer: String? = null,
-    val signatureStatus: String = "NOT_SCANNED", // NOT_SCANNED, VERIFIED_AUTHENTIC, FORGED_FLAGGED
-    val signatureMatchRate: Int = 0, // 0 to 100 percentage
+    val signatureStatus: String = "NOT_SCANNED",
+    val signatureMatchRate: Int = 0,
     val duplicateAttemptFound: Boolean = false,
-    val scanLog: String = "" // Summary of fraud analysis results
+    val scanLog: String = ""
 )
+
+// --- GST & TAXATION MODULE ---
+
+@Entity(tableName = "gst_profiles")
+data class GstProfile(
+    @PrimaryKey val gstin: String,
+    val businessId: Int,
+    val stateCode: String,
+    val registrationDate: Long,
+    val status: String // ACTIVE, SUSPENDED, CANCELLED
+)
+
+@Entity(tableName = "invoice_ledger")
+data class InvoiceLedger(
+    @PrimaryKey(autoGenerate = true) val invoiceId: Int = 0,
+    val supplierGstin: String,
+    val recipientGstin: String,
+    val taxableValue: Double,
+    val gstAmount: Double,
+    val itcEligible: Boolean,
+    val isMatchedFlag: Boolean = false
+)
+
+// --- ZERO-TRUST EMPLOYEE SYSTEM ---
+
+@Entity(tableName = "employees")
+data class Employee(
+    @PrimaryKey val employeeId: String,
+    val fullName: String,
+    val hierarchyLevel: Int, // 1 to 5
+    val role: String, // MAKER, CHECKER, AUDITOR
+    val assignedDepartment: String,
+    val slaRating: Double = 5.0,
+    val activeDeviceToken: String?,
+    val email: String,
+    val passwordHash: String,
+    val lastLogin: Long = 0L
+)
+
+@Entity(tableName = "action_proposals")
+data class ActionProposal(
+    @PrimaryKey(autoGenerate = true) val proposalId: Int = 0,
+    val applicationId: Int,
+    val makerId: String,
+    val proposedState: String,
+    val checkerId: String?,
+    val approvalTimestamp: Long?,
+    val digitalSignatureHash: String?
+)
+
+// --- CIVIL REGISTRIES & CERTIFICATES ---
+
+@Entity(tableName = "civil_registries")
+data class CivilRegistry(
+    @PrimaryKey(autoGenerate = true) val eventId: Int = 0,
+    val eventType: String, // BIRTH, DEATH
+    val subjectDetails: String, // JSON blob
+    val parentKinIds: String,
+    val medicalVerificationHash: String,
+    val status: String,
+    val timestamp: Long = System.currentTimeMillis()
+)
+
+@Entity(tableName = "issued_certificates")
+data class IssuedCertificate(
+    @PrimaryKey val certificateId: String,
+    val userId: String,
+    val certificateType: String, // INCOME, CASTE, RESIDENCE
+    val cryptographicHash: String,
+    val issuingAuthorityId: String,
+    val validUntil: Long
+)
+
+// --- WELFARE SCHEMES ---
+
+@Entity(tableName = "schemes_applications")
+data class SchemeApplication(
+    @PrimaryKey(autoGenerate = true) val applicationId: Int = 0,
+    val schemeId: Int,
+    val criteriaJson: String,
+    val citizenId: String,
+    val currentStage: String,
+    val paymentStatus: String // PENDING, DISBURSED
+)
+
+// --- AUDIT LOGS (IMMUTABLE) ---
+
+@Entity(tableName = "audit_logs")
+data class AuditLog(
+    @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    val timestamp: Long = System.currentTimeMillis(),
+    val userId: String,
+    val actionType: String,
+    val entityType: String,
+    val entityId: String,
+    val details: String,
+    val ipAddress: String,
+    val deviceId: String,
+    val checksum: String
+)
+
+// --- PREVIOUS MODULES (RETAINED) ---
 
 @Entity(tableName = "ownership_change_requests")
 data class OwnershipChangeRequest(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
-    val recordId: Int, // Ref to original RegistryRecord.id
+    val recordId: Int,
     val recordTitle: String,
     val currentOwnerName: String,
     val currentOwnerUniqueId: String,
     val requestedNewOwnerName: String,
     val requestedNewOwnerUniqueId: String,
-    val courtOrderNumber: String, // Required by prompt: "can't be charged in any form other than court orders" and authorized requests need Court Orders
+    val courtOrderNumber: String,
     val reason: String,
-    val status: String = "PENDING", // PENDING, APPROVED, REJECTED
+    val status: String = "PENDING",
     val requestedTimestamp: Long = System.currentTimeMillis()
 )
 
 @Entity(tableName = "court_orders")
 data class CourtOrder(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
-    val orderNumber: String, // Unique Indian Court Reference Number (e.g., CIVIL/DL/2026/8942)
-    val courtName: String, // e.g., Supreme Court of India, Delhi High Court
-    val details: String, // Decree or mandate detail (e.g., "Direct transfer of land survey 102 to Asha Kelkar")
-    val recordId: Int, // Target record ID
+    val orderNumber: String,
+    val courtName: String,
+    val details: String,
+    val recordId: Int,
     val mandatedNewOwnerName: String?,
     val mandatedNewOwnerUniqueId: String?,
-    val mandatedCharge: Double?, // Court ordered charge/liability
+    val mandatedCharge: Double?,
     val issuedDate: String = "2026-06-19",
     val isExecuted: Boolean = false
 )
@@ -62,9 +165,9 @@ data class BlockchainBlock(
     val timestamp: Long = System.currentTimeMillis(),
     val previousHash: String,
     val hash: String,
-    val recordId: Int, // Associated property/registry record
-    val transactionType: String, // E.g., GENESIS, DEED_GEN, TITLE_TRANS, CHARGE_MOD, LIEN_ADDED
-    val payload: String, // Immutable JSON-like detail block
+    val recordId: Int,
+    val transactionType: String,
+    val payload: String,
     val nonce: Long
 )
 
@@ -73,38 +176,13 @@ data class PropertyValuation(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val propertyName: String,
     val surveyorName: String,
-    val zoneClassification: String, // Premium Commercial, High-Density Urban, Semi-Urban, Agricultural
-    val regionalGuidelineRate: Double, // Gov guideline value per sq ft
+    val zoneClassification: String,
+    val regionalGuidelineRate: Double,
     val landAreaSqFt: Double,
-    val developmentalPremiumMultiplier: Double, // 1.0 to 2.5
+    val developmentalPremiumMultiplier: Double,
     val overallAssessedValue: Double,
     val blockchainSealHash: String,
     val createdTimestamp: Long = System.currentTimeMillis()
-)
-
-@Entity(tableName = "employees")
-data class Employee(
-    @PrimaryKey val employeeId: String,
-    val fullName: String,
-    val role: String, // OFFICER, AUDITOR, ADMIN
-    val department: String,
-    val email: String,
-    val passwordHash: String,
-    val lastLogin: Long = 0L
-)
-
-@Entity(tableName = "audit_logs")
-data class AuditLog(
-    @PrimaryKey(autoGenerate = true) val id: Int = 0,
-    val timestamp: Long = System.currentTimeMillis(),
-    val userId: String, // Employee ID or Citizen UID
-    val actionType: String, // LOGIN, CREATE_RECORD, UPDATE_RECORD, VAULT_ACCESS
-    val entityType: String, // RegistryRecord, CourtOrder, etc.
-    val entityId: String,
-    val details: String,
-    val ipAddress: String,
-    val deviceId: String,
-    val checksum: String // Cryptographic seal for the log entry
 )
 
 @Entity(tableName = "secure_vault_records")
@@ -113,23 +191,21 @@ data class SecureVaultRecord(
     val ownerUid: String,
     val docType: String,
     val docTitle: String,
-    val encryptedData: String, // AES-256 Encrypted
-    val iv: String, // Initialization Vector for AES
+    val encryptedData: String,
+    val iv: String,
     val createdTimestamp: Long = System.currentTimeMillis()
 )
-
-// --- BUSINESS & STARTUP MODULE ---
 
 @Entity(tableName = "business_entities")
 data class BusinessEntity(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val name: String,
-    val type: String, // SEED_IDEA, STARTUP, PRIVATE_LIMITED, PUBLIC_LIMITED, MNC
-    val registrationNumber: String?, // CIN for companies
-    val ownerUid: String, // Linked to Government ID (Aadhaar/PAN)
+    val type: String,
+    val registrationNumber: String?,
+    val ownerUid: String,
     val ownerName: String,
     val sector: String,
-    val status: String, // REGISTERED, ACTIVE, COMPLIANCE_PENDING, DORMANT
+    val status: String,
     val incorporationDate: Long = System.currentTimeMillis(),
     val isStartupIndiaRecognized: Boolean = false,
     val complianceScore: Int = 100
@@ -138,22 +214,22 @@ data class BusinessEntity(
 @Entity(tableName = "seed_ideas")
 data class SeedIdea(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
-    val creatorUid: String, // Linked to Government ID
+    val creatorUid: String,
     val title: String,
     val industry: String,
-    val encryptedConcept: String, // AES-256 Protected
+    val encryptedConcept: String,
     val iv: String,
-    val ipProtectionStatus: String, // PENDING, PROTECTED, PUBLIC
-    val blockchainSeal: String, // Proof of existence hash
+    val ipProtectionStatus: String,
+    val blockchainSeal: String,
     val createdTimestamp: Long = System.currentTimeMillis(),
-    val isPrivate: Boolean = true // Full privacy for creator
+    val isPrivate: Boolean = true
 )
 
 @Entity(tableName = "business_compliance_logs")
 data class BusinessComplianceLog(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val businessId: Int,
-    val complianceType: String, // TAX, REGULATORY, LABOR, ENVIRONMENTAL
+    val complianceType: String,
     val status: String,
     val details: String,
     val timestamp: Long = System.currentTimeMillis()
