@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "registry_records")
 data class RegistryRecord(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
-    val type: String, // LAND, MARRIAGE, AGREEMENT, LOAN
+    val type: String, // LAND, MARRIAGE, AGREEMENT, LOAN, BUSINESS
     val title: String,
     val ownerName: String,
     val ownerUniqueId: String, // Government-issued unique ID (e.g. Aadhaar / PAN)
@@ -82,8 +82,6 @@ data class PropertyValuation(
     val createdTimestamp: Long = System.currentTimeMillis()
 )
 
-// --- NEW ENTITIES ---
-
 @Entity(tableName = "employees")
 data class Employee(
     @PrimaryKey val employeeId: String,
@@ -118,4 +116,45 @@ data class SecureVaultRecord(
     val encryptedData: String, // AES-256 Encrypted
     val iv: String, // Initialization Vector for AES
     val createdTimestamp: Long = System.currentTimeMillis()
+)
+
+// --- BUSINESS & STARTUP MODULE ---
+
+@Entity(tableName = "business_entities")
+data class BusinessEntity(
+    @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    val name: String,
+    val type: String, // SEED_IDEA, STARTUP, PRIVATE_LIMITED, PUBLIC_LIMITED, MNC
+    val registrationNumber: String?, // CIN for companies
+    val ownerUid: String, // Linked to Government ID (Aadhaar/PAN)
+    val ownerName: String,
+    val sector: String,
+    val status: String, // REGISTERED, ACTIVE, COMPLIANCE_PENDING, DORMANT
+    val incorporationDate: Long = System.currentTimeMillis(),
+    val isStartupIndiaRecognized: Boolean = false,
+    val complianceScore: Int = 100
+)
+
+@Entity(tableName = "seed_ideas")
+data class SeedIdea(
+    @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    val creatorUid: String, // Linked to Government ID
+    val title: String,
+    val industry: String,
+    val encryptedConcept: String, // AES-256 Protected
+    val iv: String,
+    val ipProtectionStatus: String, // PENDING, PROTECTED, PUBLIC
+    val blockchainSeal: String, // Proof of existence hash
+    val createdTimestamp: Long = System.currentTimeMillis(),
+    val isPrivate: Boolean = true // Full privacy for creator
+)
+
+@Entity(tableName = "business_compliance_logs")
+data class BusinessComplianceLog(
+    @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    val businessId: Int,
+    val complianceType: String, // TAX, REGULATORY, LABOR, ENVIRONMENTAL
+    val status: String,
+    val details: String,
+    val timestamp: Long = System.currentTimeMillis()
 )

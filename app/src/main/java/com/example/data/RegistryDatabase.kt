@@ -12,9 +12,12 @@ import androidx.room.RoomDatabase
         PropertyValuation::class,
         Employee::class,
         AuditLog::class,
-        SecureVaultRecord::class
+        SecureVaultRecord::class,
+        BusinessEntity::class,
+        SeedIdea::class,
+        BusinessComplianceLog::class
     ],
-    version = 4,
+    version = 5,
     exportSchema = false
 )
 abstract class RegistryDatabase : RoomDatabase() {

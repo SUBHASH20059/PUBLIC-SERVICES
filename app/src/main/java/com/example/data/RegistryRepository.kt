@@ -31,8 +31,6 @@ class RegistryRepository(private val registryDao: RegistryDao) {
     val allValuations: Flow<List<PropertyValuation>> = registryDao.getAllValuations()
     suspend fun insertValuation(valuation: PropertyValuation) = registryDao.insertValuation(valuation)
 
-    // --- NEW REPOSITORY METHODS ---
-
     // Employee Auth
     suspend fun getEmployeeById(id: String) = registryDao.getEmployeeById(id)
     suspend fun insertEmployee(employee: Employee) = registryDao.insertEmployee(employee)
@@ -44,6 +42,17 @@ class RegistryRepository(private val registryDao: RegistryDao) {
     // Secure Vault
     fun getVaultRecordsByOwner(uid: String) = registryDao.getVaultRecordsByOwner(uid)
     suspend fun insertVaultRecord(record: SecureVaultRecord) = registryDao.insertVaultRecord(record)
+
+    // --- BUSINESS MODULE ---
+    
+    fun getBusinessesByOwner(uid: String) = registryDao.getBusinessesByOwner(uid)
+    suspend fun insertBusiness(business: BusinessEntity) = registryDao.insertBusiness(business)
+    
+    fun getSeedIdeasByCreator(uid: String) = registryDao.getSeedIdeasByCreator(uid)
+    suspend fun insertSeedIdea(idea: SeedIdea) = registryDao.insertSeedIdea(idea)
+    
+    fun getComplianceLogs(businessId: Int) = registryDao.getComplianceLogs(businessId)
+    suspend fun insertComplianceLog(log: BusinessComplianceLog) = registryDao.insertComplianceLog(log)
 
     // Helper for automated auditing
     suspend fun logAction(
@@ -59,9 +68,9 @@ class RegistryRepository(private val registryDao: RegistryDao) {
             entityType = entityType,
             entityId = entityId,
             details = details,
-            ipAddress = "127.0.0.1", // In a real app, get from network
-            deviceId = "ANDROID-DEVICE-ID", // In a real app, get from system
-            checksum = java.util.UUID.randomUUID().toString() // Simplified checksum
+            ipAddress = "127.0.0.1",
+            deviceId = "ANDROID-DEVICE-ID",
+            checksum = java.util.UUID.randomUUID().toString()
         )
         insertAuditLog(log)
     }

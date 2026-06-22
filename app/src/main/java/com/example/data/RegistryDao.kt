@@ -61,8 +61,6 @@ interface RegistryDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertValuation(valuation: PropertyValuation)
 
-    // --- NEW DAO METHODS ---
-
     // Employee Auth
     @Query("SELECT * FROM employees WHERE employeeId = :id")
     suspend fun getEmployeeById(id: String): Employee?
@@ -83,4 +81,24 @@ interface RegistryDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertVaultRecord(record: SecureVaultRecord)
+
+    // --- BUSINESS MODULE METHODS ---
+
+    @Query("SELECT * FROM business_entities WHERE ownerUid = :uid")
+    fun getBusinessesByOwner(uid: String): Flow<List<BusinessEntity>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertBusiness(business: BusinessEntity)
+
+    @Query("SELECT * FROM seed_ideas WHERE creatorUid = :uid")
+    fun getSeedIdeasByCreator(uid: String): Flow<List<SeedIdea>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertSeedIdea(idea: SeedIdea)
+
+    @Query("SELECT * FROM business_compliance_logs WHERE businessId = :businessId ORDER BY timestamp DESC")
+    fun getComplianceLogs(businessId: Int): Flow<List<BusinessComplianceLog>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertComplianceLog(log: BusinessComplianceLog)
 }
