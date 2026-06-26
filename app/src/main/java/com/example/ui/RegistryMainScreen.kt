@@ -41,7 +41,7 @@ import java.util.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RegistryMainScreen(viewModel: RegistryViewModel, securityViewModel: SecurityViewModel, businessViewModel: BusinessViewModel, gstViewModel: GstViewModel, civilRegistryViewModel: CivilRegistryViewModel) {
+fun RegistryMainScreen(viewModel: RegistryViewModel, securityViewModel: SecurityViewModel, businessViewModel: BusinessViewModel, gstViewModel: GstViewModel, civilRegistryViewModel: CivilRegistryViewModel, identityVaultViewModel: IdentityVaultViewModel) {
     val allRecords by viewModel.allRecords.collectAsState()
     val allChangeRequests by viewModel.allChangeRequests.collectAsState()
     val allCourtOrders by viewModel.allCourtOrders.collectAsState()

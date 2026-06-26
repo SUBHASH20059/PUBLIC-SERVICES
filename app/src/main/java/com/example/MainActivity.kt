@@ -30,6 +30,7 @@ class MainActivity : ComponentActivity() {
         val businessViewModel = BusinessViewModel(repository)
         val gstViewModel = GstViewModel(repository)
         val civilRegistryViewModel = CivilRegistryViewModel(repository)
+        val identityVaultViewModel = IdentityVaultViewModel(repository)
         
         enableEdgeToEdge()
         setContent {
@@ -44,7 +45,8 @@ class MainActivity : ComponentActivity() {
                         securityViewModel = securityViewModel,
                         businessViewModel = businessViewModel,
                         gstViewModel = gstViewModel,
-                        civilRegistryViewModel = civilRegistryViewModel
+                        civilRegistryViewModel = civilRegistryViewModel,
+                        identityVaultViewModel = identityVaultViewModel
                     )
                 }
             }

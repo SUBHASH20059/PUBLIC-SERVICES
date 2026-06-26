@@ -5,23 +5,22 @@ import androidx.room.RoomDatabase
 
 @Database(
     entities = [
-        RegistryRecord::class, 
-        GstProfile::class,
-        InvoiceLedger::class,
+        Registry::class,
+        MfaUserAccount::class,
         Employee::class,
         ActionProposal::class,
         CivilRegistry::class,
         IssuedCertificate::class,
+        IdentityDocument::class,
+        GstLedger::class,
         SchemeApplication::class,
+        StudentProject::class,
         AuditLog::class,
-        OwnershipChangeRequest::class, 
-        CourtOrder::class, 
-        BlockchainBlock::class, 
-        PropertyValuation::class,
-        SecureVaultRecord::class,
         BusinessEntity::class,
         SeedIdea::class,
-        BusinessComplianceLog::class
+        OwnershipChangeRequest::class,
+        CourtOrder::class,
+        BlockchainBlock::class
     ],
     version = 6,
     exportSchema = false

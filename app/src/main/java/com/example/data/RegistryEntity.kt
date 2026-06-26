@@ -4,65 +4,33 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
 
-@Entity(tableName = "registry_records")
-data class RegistryRecord(
+@Entity(tableName = "registries")
+data class Registry(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
-    val type: String, // LAND, MARRIAGE, AGREEMENT, LOAN, BUSINESS
     val title: String,
     val ownerName: String,
-    val ownerUniqueId: String,
-    val description: String,
-    val additionalParties: String,
+    val uniqueId: String,
     val status: String,
-    val constitutionStatutes: String,
-    val iasClearance: Boolean = false,
-    val incomeTaxClearance: Boolean = false,
-    val createdTimestamp: Long = System.currentTimeMillis(),
-    val courtOrderLinked: String? = null,
-    val chargeAmount: Double = 0.0,
-    val verifiedByOfficer: String? = null,
-    val signatureStatus: String = "NOT_SCANNED",
-    val signatureMatchRate: Int = 0,
-    val duplicateAttemptFound: Boolean = false,
-    val scanLog: String = ""
+    val lastModified: Long = System.currentTimeMillis()
 )
 
-// --- GST & TAXATION MODULE ---
-
-@Entity(tableName = "gst_profiles")
-data class GstProfile(
-    @PrimaryKey val gstin: String,
-    val businessId: Int,
-    val stateCode: String,
-    val registrationDate: Long,
-    val status: String // ACTIVE, SUSPENDED, CANCELLED
+@Entity(tableName = "mfa_user_accounts")
+data class MfaUserAccount(
+    @PrimaryKey val uniqueId: String,
+    val name: String,
+    val pinHash: String,
+    val mfaSecret: String,
+    val isVerified: Boolean = false
 )
-
-@Entity(tableName = "invoice_ledger")
-data class InvoiceLedger(
-    @PrimaryKey(autoGenerate = true) val invoiceId: Int = 0,
-    val supplierGstin: String,
-    val recipientGstin: String,
-    val taxableValue: Double,
-    val gstAmount: Double,
-    val itcEligible: Boolean,
-    val isMatchedFlag: Boolean = false
-)
-
-// --- ZERO-TRUST EMPLOYEE SYSTEM ---
 
 @Entity(tableName = "employees")
 data class Employee(
     @PrimaryKey val employeeId: String,
-    val fullName: String,
-    val hierarchyLevel: Int, // 1 to 5
-    val role: String, // MAKER, CHECKER, AUDITOR
-    val assignedDepartment: String,
-    val slaRating: Double = 5.0,
-    val activeDeviceToken: String?,
-    val email: String,
-    val passwordHash: String,
-    val lastLogin: Long = 0L
+    val name: String,
+    val role: String, // OFFICER, AUDITOR, CLERK, ADMIN
+    val department: String,
+    val authorizedDeviceId: String,
+    val isActive: Boolean = true
 )
 
 @Entity(tableName = "action_proposals")
@@ -77,11 +45,10 @@ data class ActionProposal(
 )
 
 // --- CIVIL REGISTRIES & CERTIFICATES ---
-
 @Entity(tableName = "civil_registries")
 data class CivilRegistry(
     @PrimaryKey(autoGenerate = true) val eventId: Int = 0,
-    val eventType: String, // BIRTH, DEATH
+    val eventType: String, // BIRTH, DEATH, MARRIAGE, DIVORCE
     val subjectDetails: String, // JSON blob
     val parentKinIds: String,
     val medicalVerificationHash: String,
@@ -93,26 +60,64 @@ data class CivilRegistry(
 data class IssuedCertificate(
     @PrimaryKey val certificateId: String,
     val userId: String,
-    val certificateType: String, // INCOME, CASTE, RESIDENCE
+    val certificateType: String, // INCOME, CASTE, RESIDENCE, BIRTH, DEATH, MARRIAGE, EDUCATION, BUSINESS
     val cryptographicHash: String,
     val issuingAuthorityId: String,
     val validUntil: Long
 )
 
-// --- WELFARE SCHEMES ---
+// --- IDENTITY VAULT (PSEI v2.0) ---
+@Entity(tableName = "identity_documents")
+data class IdentityDocument(
+    @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    val userId: String,
+    val documentType: String, // AADHAAR, VOTER_ID, PAN, PASSPORT, DL, etc.
+    val documentNumber: String,
+    val issuingAuthority: String,
+    val encryptedData: String,
+    val iv: String,
+    val status: String, // VERIFIED, PENDING, EXPIRED
+    val issueDate: Long,
+    val expiryDate: Long?
+)
 
+// --- GST & TAXATION ---
+@Entity(tableName = "gst_ledgers")
+data class GstLedger(
+    @PrimaryKey(autoGenerate = true) val ledgerId: Int = 0,
+    val businessId: Int,
+    val period: String,
+    val itcAvailable: Double,
+    val cashBalance: Double,
+    val liabilityAmount: Double,
+    val status: String // FILED, PENDING
+)
+
+// --- WELFARE SCHEMES & DBT ---
 @Entity(tableName = "schemes_applications")
 data class SchemeApplication(
     @PrimaryKey(autoGenerate = true) val applicationId: Int = 0,
     val schemeId: Int,
-    val criteriaJson: String,
+    val schemeName: String,
     val citizenId: String,
+    val criteriaJson: String,
     val currentStage: String,
     val paymentStatus: String // PENDING, DISBURSED
 )
 
-// --- AUDIT LOGS (IMMUTABLE) ---
+// --- STUDENT INNOVATION HUB ---
+@Entity(tableName = "student_projects")
+data class StudentProject(
+    @PrimaryKey(autoGenerate = true) val projectId: Int = 0,
+    val studentId: String,
+    val title: String,
+    val description: String,
+    val mentorId: String?,
+    val grantAmount: Double?,
+    val status: String // SUBMITTED, APPROVED, FUNDED
+)
 
+// --- AUDIT LOGS (IMMUTABLE) ---
 @Entity(tableName = "audit_logs")
 data class AuditLog(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
@@ -127,83 +132,14 @@ data class AuditLog(
     val checksum: String
 )
 
-// --- PREVIOUS MODULES (RETAINED) ---
-
-@Entity(tableName = "ownership_change_requests")
-data class OwnershipChangeRequest(
-    @PrimaryKey(autoGenerate = true) val id: Int = 0,
-    val recordId: Int,
-    val recordTitle: String,
-    val currentOwnerName: String,
-    val currentOwnerUniqueId: String,
-    val requestedNewOwnerName: String,
-    val requestedNewOwnerUniqueId: String,
-    val courtOrderNumber: String,
-    val reason: String,
-    val status: String = "PENDING",
-    val requestedTimestamp: Long = System.currentTimeMillis()
-)
-
-@Entity(tableName = "court_orders")
-data class CourtOrder(
-    @PrimaryKey(autoGenerate = true) val id: Int = 0,
-    val orderNumber: String,
-    val courtName: String,
-    val details: String,
-    val recordId: Int,
-    val mandatedNewOwnerName: String?,
-    val mandatedNewOwnerUniqueId: String?,
-    val mandatedCharge: Double?,
-    val issuedDate: String = "2026-06-19",
-    val isExecuted: Boolean = false
-)
-
-@Entity(tableName = "blockchain_ledger")
-data class BlockchainBlock(
-    @PrimaryKey(autoGenerate = true) val id: Int = 0,
-    val blockIndex: Int,
-    val timestamp: Long = System.currentTimeMillis(),
-    val previousHash: String,
-    val hash: String,
-    val recordId: Int,
-    val transactionType: String,
-    val payload: String,
-    val nonce: Long
-)
-
-@Entity(tableName = "property_valuations")
-data class PropertyValuation(
-    @PrimaryKey(autoGenerate = true) val id: Int = 0,
-    val propertyName: String,
-    val surveyorName: String,
-    val zoneClassification: String,
-    val regionalGuidelineRate: Double,
-    val landAreaSqFt: Double,
-    val developmentalPremiumMultiplier: Double,
-    val overallAssessedValue: Double,
-    val blockchainSealHash: String,
-    val createdTimestamp: Long = System.currentTimeMillis()
-)
-
-@Entity(tableName = "secure_vault_records")
-data class SecureVaultRecord(
-    @PrimaryKey(autoGenerate = true) val id: Int = 0,
-    val ownerUid: String,
-    val docType: String,
-    val docTitle: String,
-    val encryptedData: String,
-    val iv: String,
-    val createdTimestamp: Long = System.currentTimeMillis()
-)
-
+// --- BUSINESS MODULE (SEED TO MNC) ---
 @Entity(tableName = "business_entities")
 data class BusinessEntity(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val name: String,
-    val type: String,
+    val type: String, // STARTUP, PVT_LTD, PUB_LTD, MNC
     val registrationNumber: String?,
     val ownerUid: String,
-    val ownerName: String,
     val sector: String,
     val status: String,
     val incorporationDate: Long = System.currentTimeMillis(),
@@ -225,12 +161,35 @@ data class SeedIdea(
     val isPrivate: Boolean = true
 )
 
-@Entity(tableName = "business_compliance_logs")
-data class BusinessComplianceLog(
+// --- PREVIOUS MODULES (RETAINED) ---
+@Entity(tableName = "ownership_change_requests")
+data class OwnershipChangeRequest(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
-    val businessId: Int,
-    val complianceType: String,
-    val status: String,
+    val recordId: Int,
+    val requestedNewOwnerUniqueId: String,
+    val courtOrderNumber: String,
+    val status: String = "PENDING",
+    val requestedTimestamp: Long = System.currentTimeMillis()
+)
+
+@Entity(tableName = "court_orders")
+data class CourtOrder(
+    @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    val orderNumber: String,
+    val courtName: String,
     val details: String,
-    val timestamp: Long = System.currentTimeMillis()
+    val recordId: Int,
+    val isExecuted: Boolean = false
+)
+
+@Entity(tableName = "blockchain_ledger")
+data class BlockchainBlock(
+    @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    val blockIndex: Int,
+    val timestamp: Long = System.currentTimeMillis(),
+    val previousHash: String,
+    val hash: String,
+    val transactionType: String,
+    val payload: String,
+    val nonce: Long
 )
