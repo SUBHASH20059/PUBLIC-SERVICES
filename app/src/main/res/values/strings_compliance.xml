@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="privacy_policy_title">Privacy Policy</string>
+    <string name="privacy_policy_content">Your privacy is important to us. This application collects minimal data required for government service verification. We use end-to-end encryption for all identity documents and do not share your data with third parties without your explicit consent. For more details, visit our official portal.</string>
+    
+    <string name="terms_of_use_title">Terms of Use</string>
+    <string name="terms_of_use_content">By using this application, you agree to the terms and conditions of the National Digital Trust Platform. All data submitted must be accurate and verifiable. Misuse of government services is subject to legal action under the IT Act 2000.</string>
+
+    <string name="permission_camera_rationale">This app requires camera access to scan document QR codes and capture proof for verification as required by government standards.</string>
+    <string name="permission_location_rationale">Location access is required to verify the regional jurisdiction for localized government services.</string>
+</resources>
