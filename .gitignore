@@ -16,3 +16,13 @@
 local.properties
 .env
 debug.keystore
+# PSEI Backend additions
+.env.local
+.env.production
+uploads/
+*.log
+*.jar
+*.class
+psei-service/build/
+psei-service/out/
+psei-service/target/

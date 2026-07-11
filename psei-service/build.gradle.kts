@@ -10,6 +10,7 @@ repositories {
 
 val ktorVersion = "2.3.4"
 val exposedVersion = "0.41.1"
+val ktorSwaggerVersion = "2.7.0"
 
 dependencies {
     // ── Ktor Core ─────────────────────────────────────────────────────────
@@ -49,9 +50,31 @@ dependencies {
     implementation("org.flywaydb:flyway-core:9.22.0")
     implementation("com.zaxxer:HikariCP:5.0.1")
 
+    // ── Swagger/OpenAPI Documentation ────────────────────────────────────
+    implementation("io.github.smiley4:ktor-swagger-ui:$ktorSwaggerVersion")
+
+    // ── Caching (Redis) ──────────────────────────────────────────────────
+    implementation("redis.clients:jedis:5.1.0")
+
+    // ── Background Jobs ──────────────────────────────────────────────────
+    implementation("org.quartz-scheduler:quartz:2.3.2")
+
     // ── Logging ──────────────────────────────────────────────────────────
     implementation("org.slf4j:slf4j-api:2.0.9")
     implementation("ch.qos.logback:logback-classic:1.4.11")
+    implementation("net.logstash.logback:logstash-logback-encoder:7.4")
+
+    // ── Environment Configuration ────────────────────────────────────────
+    implementation("io.github.cdimascio:dotenv-kotlin:6.4.1")
+
+    // ── Exposed DateTime ─────────────────────────────────────────────────
+    implementation("org.jetbrains.exposed:exposed-datetime:$exposedVersion")
+
+    // ── Monitoring (Sentry) ──────────────────────────────────────────────
+    implementation("io.sentry:sentry:6.28.0")
+
+    // ── Testing ──────────────────────────────────────────────────────────
+    testImplementation("io.mockk:mockk:1.13.8")
 
     // ── Serialization ────────────────────────────────────────────────────
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
